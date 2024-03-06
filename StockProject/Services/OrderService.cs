@@ -23,9 +23,9 @@ namespace StockProject.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task Update(Order order)
+        public async Task Update(int orderId, Order order)
         {
-            var orderActual = context.Orders.Find(order.OrderId);
+            var orderActual = context.Orders.Find(orderId);
             if (orderActual != null)
             { 
                 orderActual.OrderDate = order.OrderDate;
@@ -61,7 +61,7 @@ namespace StockProject.Services
     {
         IEnumerable<Order> Get();
         Task Save(Order order);
-        Task Update(Order order);
+        Task Update(int orderId, Order order);
         Task Delete(int orderId);
         void ProcesarNuevaOrden(Order nuevaOrden);
     }
