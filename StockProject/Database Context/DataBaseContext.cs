@@ -38,19 +38,20 @@ namespace StockProject.Database_Context
                 .HasForeignKey(vp => vp.SaleId);
             });
 
-            modelBuilder.Entity<ProductOrder>(p =>
-            { 
-                p.HasOne(po => po.Order)
-                .WithMany(o => o.OrderProducts)
-                .HasForeignKey(po => po.OrderId);
-            });
-            modelBuilder.Entity<ProductOrder>(p =>
-            { 
-                p.HasOne(po => po.Product)
-                .WithMany(p => p.OrderProducts)
-                .HasForeignKey(po => po.ProductId);
+            modelBuilder.Entity<Order>(order =>
+            {
+                order.ToTable("Order");
+                order.HasMany(p => p.OrderProducts)
+                .WithOne().IsRequired();    
+
             });
 
+            modelBuilder.Entity<Order>(order =>
+            {
+                order.HasMany(p => p.OrderProducts)
+                .WithOne(op => op.Order)
+                .HasForeignKey(p => p.OrderId);
+            });
         }
     }
 }

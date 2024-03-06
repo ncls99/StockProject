@@ -30,7 +30,7 @@ namespace StockProject.Services
             { 
                 orderActual.OrderDate = order.OrderDate;
                 orderActual.TotalAmount = order.TotalAmount;
-                orderActual.Provider.OrderProducts = order.Provider.OrderProducts;
+                orderActual.OrderProducts = order.OrderProducts;
             }
 
         }

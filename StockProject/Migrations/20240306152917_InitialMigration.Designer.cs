@@ -12,7 +12,7 @@ using StockProject.Database_Context;
 namespace StockProject.Migrations
 {
     [DbContext(typeof(DataBaseContext))]
-    [Migration("20240306050629_InitialMigration")]
+    [Migration("20240306152917_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -24,6 +24,38 @@ namespace StockProject.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("StockProject.Models.Order", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderId"));
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ProviderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalAmount")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("Order", (string)null);
+                });
 
             modelBuilder.Entity("StockProject.Models.Product", b =>
                 {
@@ -43,11 +75,40 @@ namespace StockProject.Migrations
                     b.Property<Guid>("ProviderID")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.HasKey("ProductId");
 
                     b.HasIndex("ProviderID");
 
                     b.ToTable("Product", (string)null);
+                });
+
+            modelBuilder.Entity("StockProject.Models.ProductOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductOrders");
                 });
 
             modelBuilder.Entity("StockProject.Models.Provider", b =>
@@ -81,10 +142,18 @@ namespace StockProject.Migrations
                     b.Property<DateTime>("DateSale")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<int>("TotalAmount")
                         .HasColumnType("int");
 
                     b.HasKey("SaleId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("Sale", (string)null);
                 });
@@ -115,6 +184,21 @@ namespace StockProject.Migrations
                     b.ToTable("ventaProductos");
                 });
 
+            modelBuilder.Entity("StockProject.Models.Order", b =>
+                {
+                    b.HasOne("StockProject.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StockProject.Models.Provider", null)
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("ProviderId");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("StockProject.Models.Product", b =>
                 {
                     b.HasOne("StockProject.Models.Provider", "Provider")
@@ -124,6 +208,32 @@ namespace StockProject.Migrations
                         .IsRequired();
 
                     b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("StockProject.Models.ProductOrder", b =>
+                {
+                    b.HasOne("StockProject.Models.Order", "Order")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StockProject.Models.Product", null)
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("StockProject.Models.Sale", b =>
+                {
+                    b.HasOne("StockProject.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("StockProject.Models.VentaProducto", b =>
@@ -145,13 +255,22 @@ namespace StockProject.Migrations
                     b.Navigation("Sale");
                 });
 
+            modelBuilder.Entity("StockProject.Models.Order", b =>
+                {
+                    b.Navigation("OrderProducts");
+                });
+
             modelBuilder.Entity("StockProject.Models.Product", b =>
                 {
+                    b.Navigation("OrderProducts");
+
                     b.Navigation("SaleProducts");
                 });
 
             modelBuilder.Entity("StockProject.Models.Provider", b =>
                 {
+                    b.Navigation("OrderProducts");
+
                     b.Navigation("Products");
                 });
 
