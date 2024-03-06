@@ -46,6 +46,17 @@ namespace StockProject.Services
             }
 
         }
+
+        public void ProcesarNuevaSale(Sale nuevaSale)
+        {
+            var producto = context.Productos.Find(nuevaSale.ProductId);
+
+            if (producto != null)
+            {
+                producto.Quantity += nuevaSale.Quantity;
+                context.SaveChanges();
+            }
+        }
     }
 
     public interface ISaleService
@@ -54,5 +65,7 @@ namespace StockProject.Services
         Task Save(Sale sale);
         Task Update(int saleId, Sale sale);
         Task Delete(int saleId);
+
+        void ProcesarNuevaSale(Sale nuevaSale);
     }
 }

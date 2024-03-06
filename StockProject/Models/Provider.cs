@@ -12,5 +12,7 @@ namespace StockProject.Models
         public string PhoneNumber { get; set; }
 
         public ICollection<Product> Products { get; set; }
+        public ICollection<Order> OrderProducts { get; set; } = new HashSet<Order>();
+
     }
 }

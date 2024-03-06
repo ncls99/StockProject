@@ -15,5 +15,7 @@ namespace StockProject.Models
         public Guid ProviderID { get; set; }
         public Provider Provider { get; set; }
         public ICollection<VentaProducto> SaleProducts { get; set; } = new HashSet<VentaProducto>();
+        public ICollection<ProductOrder> OrderProducts { get; set; } = new HashSet<ProductOrder>();
+        public int Quantity { get; set; }
     }
 }

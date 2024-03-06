@@ -9,6 +9,8 @@ namespace StockProject.Database_Context
         public DbSet<Provider> Providers { get; set; }
         public DbSet<Sale> Sales { get; set; }
         public DbSet<VentaProducto> ventaProductos { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<ProductOrder> ProductOrders { get; set; }
 
         public DataBaseContext(DbContextOptions<DataBaseContext> options) : base(options) { }
 
@@ -29,16 +31,26 @@ namespace StockProject.Database_Context
                 .WithOne().IsRequired();
             });
 
-            modelBuilder.Entity<Sale>()
-           .HasMany(v => v.SaleProducts)
-           .WithOne(vp => vp.Sale)
-           .HasForeignKey(vp => vp.SaleId);
+            modelBuilder.Entity<Sale>(sale =>
+            {
+                sale.HasMany(v => v.SaleProducts)
+                .WithOne(vp => vp.Sale)
+                .HasForeignKey(vp => vp.SaleId);
+            });
 
-            // Configuración de la relación uno a muchos (Producto - VentaProducto)
-            modelBuilder.Entity<Product>()
-                .HasMany(p => p.SaleProducts)
-                .WithOne(vp => vp.Product)
-                .HasForeignKey(vp => vp.ProductId);
+            modelBuilder.Entity<ProductOrder>(p =>
+            { 
+                p.HasOne(po => po.Order)
+                .WithMany(o => o.OrderProducts)
+                .HasForeignKey(po => po.OrderId);
+            });
+            modelBuilder.Entity<ProductOrder>(p =>
+            { 
+                p.HasOne(po => po.Product)
+                .WithMany(p => p.OrderProducts)
+                .HasForeignKey(po => po.ProductId);
+            });
+
         }
     }
 }
