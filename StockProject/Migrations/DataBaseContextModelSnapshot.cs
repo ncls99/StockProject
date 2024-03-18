@@ -33,10 +33,7 @@ namespace StockProject.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("ProviderId")
+                    b.Property<Guid>("ProviderId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
@@ -47,11 +44,27 @@ namespace StockProject.Migrations
 
                     b.HasKey("OrderId");
 
-                    b.HasIndex("ProductId");
-
                     b.HasIndex("ProviderId");
 
-                    b.ToTable("Order", (string)null);
+                    b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("StockProject.Models.OrderDetails", b =>
+                {
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("StockProject.Models.Product", b =>
@@ -72,40 +85,32 @@ namespace StockProject.Migrations
                     b.Property<Guid>("ProviderID")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("UnitsInStock")
                         .HasColumnType("int");
 
                     b.HasKey("ProductId");
 
                     b.HasIndex("ProviderID");
 
-                    b.ToTable("Product", (string)null);
+                    b.ToTable("Product");
                 });
 
-            modelBuilder.Entity("StockProject.Models.ProductOrder", b =>
+            modelBuilder.Entity("StockProject.Models.ProductProvider", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("ProviderId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("OrderId")
+                    b.Property<int>("Cost")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ProductId")
-                        .HasColumnType("int");
+                    b.HasKey("ProductId", "ProviderId");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                    b.HasIndex("ProviderId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductOrders");
+                    b.ToTable("ProductProvider");
                 });
 
             modelBuilder.Entity("StockProject.Models.Provider", b =>
@@ -125,7 +130,7 @@ namespace StockProject.Migrations
 
                     b.HasKey("ProviderId");
 
-                    b.ToTable("Providers");
+                    b.ToTable("Provider");
                 });
 
             modelBuilder.Entity("StockProject.Models.Sale", b =>
@@ -139,59 +144,58 @@ namespace StockProject.Migrations
                     b.Property<DateTime>("DateSale")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
                     b.Property<int>("TotalAmount")
                         .HasColumnType("int");
 
                     b.HasKey("SaleId");
 
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("Sale", (string)null);
+                    b.ToTable("Sale");
                 });
 
-            modelBuilder.Entity("StockProject.Models.VentaProducto", b =>
+            modelBuilder.Entity("StockProject.Models.SaleDetails", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("SaleId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("QuantitySold")
                         .HasColumnType("int");
 
-                    b.Property<int>("SaleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("SaleId", "ProductId");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("SaleId");
-
-                    b.ToTable("ventaProductos");
+                    b.ToTable("SaleDetails");
                 });
 
             modelBuilder.Entity("StockProject.Models.Order", b =>
                 {
-                    b.HasOne("StockProject.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
+                    b.HasOne("StockProject.Models.Provider", "Provider")
+                        .WithMany("Orders")
+                        .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("StockProject.Models.Provider", null)
+                    b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("StockProject.Models.OrderDetails", b =>
+                {
+                    b.HasOne("StockProject.Models.Order", "Order")
                         .WithMany("OrderProducts")
-                        .HasForeignKey("ProviderId");
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StockProject.Models.Product", "Product")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -207,38 +211,31 @@ namespace StockProject.Migrations
                     b.Navigation("Provider");
                 });
 
-            modelBuilder.Entity("StockProject.Models.ProductOrder", b =>
-                {
-                    b.HasOne("StockProject.Models.Order", "Order")
-                        .WithMany("OrderProducts")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("StockProject.Models.Product", null)
-                        .WithMany("OrderProducts")
-                        .HasForeignKey("ProductId");
-
-                    b.Navigation("Order");
-                });
-
-            modelBuilder.Entity("StockProject.Models.Sale", b =>
+            modelBuilder.Entity("StockProject.Models.ProductProvider", b =>
                 {
                     b.HasOne("StockProject.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("productProviders")
                         .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("StockProject.Models.Provider", "Provider")
+                        .WithMany("productProviders")
+                        .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
+
+                    b.Navigation("Provider");
                 });
 
-            modelBuilder.Entity("StockProject.Models.VentaProducto", b =>
+            modelBuilder.Entity("StockProject.Models.SaleDetails", b =>
                 {
                     b.HasOne("StockProject.Models.Product", "Product")
                         .WithMany("SaleProducts")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("StockProject.Models.Sale", "Sale")
@@ -262,13 +259,17 @@ namespace StockProject.Migrations
                     b.Navigation("OrderProducts");
 
                     b.Navigation("SaleProducts");
+
+                    b.Navigation("productProviders");
                 });
 
             modelBuilder.Entity("StockProject.Models.Provider", b =>
                 {
-                    b.Navigation("OrderProducts");
+                    b.Navigation("Orders");
 
                     b.Navigation("Products");
+
+                    b.Navigation("productProviders");
                 });
 
             modelBuilder.Entity("StockProject.Models.Sale", b =>

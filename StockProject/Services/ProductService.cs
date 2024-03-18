@@ -13,7 +13,7 @@ namespace StockProject.Services
 
         public IEnumerable<Product> Get()
         {
-            return context.Productos;
+            return context.Product;
         }
 
         public async Task Save(Product product)
@@ -24,7 +24,7 @@ namespace StockProject.Services
 
         public async Task Update(Guid productId, Product product)
         { 
-            var productActual = context.Productos.Find(productId);
+            var productActual = context.Product.Find(productId);
             if (productActual != null)
             {
                 productActual.ProductName = product.ProductName;
@@ -36,7 +36,7 @@ namespace StockProject.Services
 
         public async Task Delete(Guid productId)
         {
-            var productActual = context.Providers.Find(productId);
+            var productActual = context.Product.Find(productId);
             if (productActual != null)
             {
                 context.Remove(productActual);

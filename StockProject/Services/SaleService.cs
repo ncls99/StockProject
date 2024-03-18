@@ -14,7 +14,7 @@ namespace StockProject.Services
 
         public IEnumerable<Sale> Get()
         {
-            return context.Sales;
+            return context.Sale;
         }
 
         public async Task Save(Sale sale)
@@ -25,7 +25,7 @@ namespace StockProject.Services
 
         public async Task Update(int saleId, Sale sale)
         { 
-            var saleActual = context.Sales.Find(saleId);
+            var saleActual = context.Sale.Find(saleId);
             if (saleActual == null) 
             {
                 saleActual.DateSale = sale.DateSale;
@@ -38,24 +38,13 @@ namespace StockProject.Services
 
         public async Task Delete(int saleId)
         {
-            var saleActual = context.Sales.Find(saleId);
+            var saleActual = context.Sale.Find(saleId);
             if (saleActual == null)
             { 
                 context.Remove(saleActual);
                 await context.SaveChangesAsync();
             }
 
-        }
-
-        public void ProcesarNuevaSale(Sale nuevaSale)
-        {
-            var producto = context.Productos.Find(nuevaSale.ProductId);
-
-            if (producto != null)
-            {
-                producto.Quantity += nuevaSale.Quantity;
-                context.SaveChanges();
-            }
         }
     }
 
@@ -65,7 +54,5 @@ namespace StockProject.Services
         Task Save(Sale sale);
         Task Update(int saleId, Sale sale);
         Task Delete(int saleId);
-
-        void ProcesarNuevaSale(Sale nuevaSale);
     }
 }

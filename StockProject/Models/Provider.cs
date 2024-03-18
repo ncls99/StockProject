@@ -10,9 +10,10 @@ namespace StockProject.Models
         [Required]
         public Guid ProviderId { get; set; }    
         public string PhoneNumber { get; set; }
-
         public ICollection<Product> Products { get; set; }
-        public ICollection<Order> OrderProducts { get; set; } = new HashSet<Order>();
+        public ICollection<ProductProvider> productProviders { get; set; }
+        public ICollection<Order> Orders { get; set; }
+
 
     }
 }

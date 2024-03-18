@@ -14,18 +14,18 @@ namespace StockProject.Services
 
         public IEnumerable<Order> Get()
         {
-            return context.Orders;
+            return context.Order;
         }
 
         public async Task Save(Order order)
         { 
-            context.Orders.Add(order);
+            context.Order.Add(order);
             await context.SaveChangesAsync();
         }
 
         public async Task Update(int orderId, Order order)
         {
-            var orderActual = context.Orders.Find(orderId);
+            var orderActual = context.Order.Find(orderId);
             if (orderActual != null)
             { 
                 orderActual.OrderDate = order.OrderDate;
@@ -37,23 +37,11 @@ namespace StockProject.Services
 
         public async Task Delete(int orderId)
         {
-            var orderActual = context.Orders.Find(orderId);
+            var orderActual = context.Order.Find(orderId);
             if (orderActual != null)
             { 
                 context.Remove(orderActual);
                 await context.SaveChangesAsync();
-            }
-        }
-
-
-        public void ProcesarNuevaOrden(Order nuevaOrden)
-        {
-            var producto = context.Productos.Find(nuevaOrden.ProductId);
-
-            if (producto != null)
-            {
-                producto.Quantity += nuevaOrden.Quantity;
-                context.SaveChanges();
             }
         }
     }
@@ -63,6 +51,5 @@ namespace StockProject.Services
         Task Save(Order order);
         Task Update(int orderId, Order order);
         Task Delete(int orderId);
-        void ProcesarNuevaOrden(Order nuevaOrden);
     }
 }

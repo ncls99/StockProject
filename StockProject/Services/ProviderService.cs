@@ -13,7 +13,7 @@ namespace StockProject.Services
 
         public IEnumerable<Provider> Get()
         {
-            return context.Providers;
+            return context.Provider;
         }
 
         public async Task Save(Provider provider)
@@ -24,7 +24,7 @@ namespace StockProject.Services
 
         public async Task Update(Guid providerId, Provider provider)
         {
-            var providerActual = context.Providers.Find(providerId);
+            var providerActual = context.Provider.Find(providerId);
             if (providerActual != null)
             {
                 providerActual.Name = provider.Name;
@@ -37,7 +37,7 @@ namespace StockProject.Services
 
         public async Task Delete(Guid providerId)
         {
-            var providerActual = context.Providers.Find(providerId);
+            var providerActual = context.Provider.Find(providerId);
             if (providerActual != null)
             {
                 context.Remove(providerActual);

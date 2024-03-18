@@ -5,7 +5,8 @@ namespace StockProject.Models
 {
     public class Product
     {
-        [Key][Required]
+        [Key]
+        [Required]
         public int ProductId { get; set; }
         [Required]
         public string ProductName { get; set; }
@@ -14,8 +15,9 @@ namespace StockProject.Models
         [Required]
         public Guid ProviderID { get; set; }
         public Provider Provider { get; set; }
-        public ICollection<VentaProducto> SaleProducts { get; set; } = new HashSet<VentaProducto>();
-        public ICollection<ProductOrder> OrderProducts { get; set; } = new HashSet<ProductOrder>();
-        public int Quantity { get; set; }
+        public ICollection<SaleDetails> SaleProducts { get; set; } /*= new HashSet<VentaProducto>();*/
+        public ICollection<OrderDetails> OrderProducts { get; set; } /*= new HashSet<ProductOrder>();*/
+        public ICollection<ProductProvider> productProviders { get; set; }
+        public int UnitsInStock { get; set; }
     }
 }
