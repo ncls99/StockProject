@@ -16,10 +16,16 @@ namespace StockProject.Services
             return context.Provider;
         }
 
-        public async Task Save(Provider provider)
+        public async Task<Provider> GetProviderById(Guid id)
         {
-            context.Add(provider);
-            await context.SaveChangesAsync();
+            return await context.Provider.FindAsync(id);
+        }
+
+        public bool Save(Provider provider)
+        {
+            context.Provider.Add(provider);
+            var validateSavedChanges = context.SaveChanges();
+            return validateSavedChanges > 0;
         }
 
         public async Task Update(Guid providerId, Provider provider)
@@ -49,7 +55,8 @@ namespace StockProject.Services
     public interface IProviderService
     {
         IEnumerable<Provider> Get();
-        Task Save(Provider provider);
+        Task<Provider> GetProviderById(Guid id);
+        bool Save(Provider provider);
         Task Update(Guid providerId, Provider provider);
         Task Delete(Guid providerId);
 

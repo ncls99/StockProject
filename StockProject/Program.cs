@@ -14,7 +14,11 @@ builder.Services.AddSqlServer<DataBaseContext>(builder.Configuration.GetConnecti
 builder.Services.AddScoped<IProviderService, ProviderService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ISaleService, SaleService>();
-
+builder.Services.AddLogging(logging =>
+{
+    logging.ClearProviders(); // Limpiar cualquier proveedor de registro predeterminado
+    logging.AddConsole();     // Agregar el proveedor de registro de la consola
+});
 
 var app = builder.Build();
 

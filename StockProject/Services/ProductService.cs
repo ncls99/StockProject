@@ -16,10 +16,17 @@ namespace StockProject.Services
             return context.Product;
         }
 
-        public async Task Save(Product product)
+        public async Task<Product> GetProductById(int id)
+        {
+            return await context.Product.FindAsync(id);
+        }
+
+        public bool Save(Product product)
         { 
-            context.Add(product);
-            await context.SaveChangesAsync();
+            context.Product.Add(product);
+            var validateSavedChanges = context.SaveChanges();
+
+            return validateSavedChanges > 0;
         }
 
         public async Task Update(Guid productId, Product product)
@@ -48,7 +55,8 @@ namespace StockProject.Services
     public interface IProductService
     {
         IEnumerable<Product> Get();
-        Task Save(Product product);
+        Task<Product> GetProductById(int id);
+        bool Save(Product product);
         Task Update(Guid productId, Product product);
         Task Delete(Guid productId);
     }
